@@ -58,7 +58,9 @@ class Embeddings(object):
             vector model
         """
 
-        return Factory.create(self.config.get("method"), path, True if not self.embeddings else False, self.scoring)
+        return Factory.create(
+            self.config.get("method"), path, not self.embeddings, self.scoring
+        )
 
     def score(self, documents):
         """

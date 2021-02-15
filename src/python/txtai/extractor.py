@@ -30,7 +30,7 @@ class Extractor(object):
         self.pipeline = Pipeline(path, quantize)
 
         # Tokenizer class use default method if not set
-        self.tokenizer = tokenizer if tokenizer else Tokenizer
+        self.tokenizer = tokenizer or Tokenizer
 
     def __call__(self, sections, queue):
         """
@@ -72,12 +72,14 @@ class Extractor(object):
                 text = segments[x][1]
 
                 # Add result if all required tokens are present or there are not required tokens
-                if not must or all([token.lower() in text.lower() for token in must]):
+                if not must or all(
+                    token.lower() in text.lower() for token in must
+                ):
                     matches.append(segments[x] + (score,))
 
             # Build context using top n best matching segments
             topn = sorted(matches, key=lambda x: x[2], reverse=True)[:3]
-            context = " ".join([text for _, text, _ in sorted(topn, key=lambda x: x[0])])
+            context = " ".join(text for _, text, _ in sorted(topn, key=lambda x: x[0]))
 
             names.append(name)
             questions.append(question)
