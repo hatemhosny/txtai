@@ -162,12 +162,15 @@ class WordVectors(Vectors):
         # pylint: disable=E1133
         if weights and [x for x in weights if x > 0]:
             # Build weighted average embeddings vector. Create weights array os float32 to match embeddings precision.
-            embedding = np.average(self.lookup(document[1]), weights=np.array(weights, dtype=np.float32), axis=0)
+            return np.average(
+                self.lookup(document[1]),
+                weights=np.array(weights, dtype=np.float32),
+                axis=0,
+            )
+
         else:
             # If no weights, use mean
-            embedding = np.mean(self.lookup(document[1]), axis=0)
-
-        return embedding
+            return np.mean(self.lookup(document[1]), axis=0)
 
     def lookup(self, tokens):
         """
@@ -209,10 +212,7 @@ class WordVectors(Vectors):
                 # Skip end of line token
                 if word != "</s>":
                     vector = model.get_word_vector(word)
-                    data = ""
-                    for v in vector:
-                        data += " " + str(v)
-
+                    data = "".join(" " + str(v) for v in vector)
                     output.write(word + data + "\n")
 
         # Build magnitude vectors database
